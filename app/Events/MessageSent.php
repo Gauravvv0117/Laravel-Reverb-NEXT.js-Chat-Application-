@@ -2,55 +2,50 @@
 
 namespace App\Events;
 
-use App\Models\ChatMessage;
+use App\Models\Message;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcastNow
+class MessageSent implements ShouldBroadcast
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
 
-    /**
-     * Create a new event instance.
-     *
-     * @param  ChatMessage  $message
-     * @return void
-     */
-    public function __construct(ChatMessage $message)
+    public function __construct(Message $message)
     {
         $this->message = $message;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PrivateChannel('chat.' . $this->message->reciver_id), // Fixed channel name
-        ];
+        $userId1 = min($this->message->sender_id, $this->message->receiver_id);
+        $userId2 = max($this->message->sender_id, $this->message->receiver_id);
+        return new PrivateChannel("chat.{$userId1}.{$userId2}");
     }
 
-    /**
-     * Get the data to broadcast.
-     *
-     * @return array
-     */
-    public function broadcastWith(): array
+    public function broadcastWith()
     {
         return [
-            'id' => $this->message->id,
-            'sender_id' => $this->message->sender_id,
-            'reciver_id' => $this->message->reciver_id,
-            'message' => $this->message->message,
-            'created_at' => $this->message->created_at->toDateTimeString(), // Optional: Add timestamp for better tracking
+            'message' => [
+                'id' => $this->message->id,
+                'sender_id' => $this->message->sender_id,
+                'receiver_id' => $this->message->receiver_id,
+                'message' => $this->message->message,
+                'created_at' => $this->message->created_at->toDateTimeString(),
+                'sender' => $this->message->sender ? [
+                    'id' => $this->message->sender->id,
+                    'name' => $this->message->sender->name,
+                ] : null,
+                'receiver' => $this->message->receiver ? [
+                    'id' => $this->message->receiver->id,
+                    'name' => $this->message->receiver->name,
+                ] : null,
+            ],
         ];
     }
 }
-

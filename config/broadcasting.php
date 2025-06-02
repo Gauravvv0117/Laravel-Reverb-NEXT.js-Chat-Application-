@@ -19,6 +19,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Broadcast Guards
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the guards that should be used to authenticate
+    | incoming requests to the broadcasting authentication routes.
+    |
+    */
+
+    'guards' => ['web'], // ✅ Correctly placed at top level
+
+    /*
+    |--------------------------------------------------------------------------
     | Broadcast Connections
     |--------------------------------------------------------------------------
     |
@@ -42,7 +54,7 @@ return [
                 'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Guzzle client options
             ],
         ],
 
@@ -60,7 +72,7 @@ return [
                 'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Guzzle client options
             ],
         ],
 
