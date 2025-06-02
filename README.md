@@ -1,7 +1,7 @@
 A fully functional real-time chat application built with **Laravel** (backend) and **Next.js** (frontend), powered by **Laravel Reverb** for WebSocket-based real-time communication.
 ## 🚀 Features
 
-- ✅ Real-time private and group messaging  
+- ✅ Real-time private messaging  
 - ✅ Typing indicators  
 - ✅ Online/offline user status  
 - ✅ Message read receipts  
